@@ -284,12 +284,10 @@ func (p *Program) Start() error {
 		}()
 	}
 
-	// Start renderer
-	p.renderer.start()
 	p.renderer.altScreenActive = p.altScreenActive
 
 	// Render initial view
-	p.renderer.write(model.View())
+	p.renderer.flush(model.View())
 
 	// Subscribe to user input
 	if p.inputIsTTY {
@@ -349,7 +347,6 @@ func (p *Program) Start() error {
 			// Handle special messages
 			switch msg.(type) {
 			case quitMsg:
-				p.renderer.stop()
 				close(done)
 				return nil
 			case hideCursorMsg:
@@ -369,7 +366,7 @@ func (p *Program) Start() error {
 			var cmd Cmd
 			model, cmd = model.Update(msg) // run update
 			cmds <- cmd                    // process command (if any)
-			p.renderer.write(model.View()) // send view to renderer
+			p.renderer.flush(model.View())
 		}
 	}
 }

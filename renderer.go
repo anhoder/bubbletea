@@ -2,18 +2,10 @@ package tea
 
 import (
 	"bytes"
+	"github.com/muesli/reflow/truncate"
 	"io"
 	"strings"
 	"sync"
-	"time"
-
-	"github.com/muesli/reflow/truncate"
-)
-
-const (
-	// defaultFramerate specifies the maximum interval at which we should
-	// update the view.
-	defaultFramerate = time.Second / 60
 )
 
 // renderer is a timer-based renderer, updating the view at a given framerate
@@ -23,11 +15,7 @@ const (
 // to exclude ranges of lines, allowing them to be written to directly.
 type renderer struct {
 	out           io.Writer
-	buf           bytes.Buffer
-	framerate     time.Duration
-	ticker        *time.Ticker
 	mtx           *sync.Mutex
-	done          chan struct{}
 	lastRender    string
 	linesRendered int
 
@@ -46,52 +34,17 @@ type renderer struct {
 // with os.Stdout as the first argument.
 func newRenderer(out io.Writer, mtx *sync.Mutex) *renderer {
 	return &renderer{
-		out:       out,
-		mtx:       mtx,
-		framerate: defaultFramerate,
-	}
-}
-
-// start starts the renderer.
-func (r *renderer) start() {
-	if r.ticker == nil {
-		r.ticker = time.NewTicker(r.framerate)
-	}
-	r.done = make(chan struct{})
-	go r.listen()
-}
-
-// stop permanently halts the renderer.
-func (r *renderer) stop() {
-	r.flush()
-	r.done <- struct{}{}
-}
-
-// listen waits for ticks on the ticker, or a signal to stop the renderer.
-func (r *renderer) listen() {
-	for {
-		select {
-		case <-r.ticker.C:
-			if r.ticker != nil {
-				r.flush()
-			}
-		case <-r.done:
-			r.mtx.Lock()
-			r.ticker.Stop()
-			r.ticker = nil
-			r.mtx.Unlock()
-			close(r.done)
-			return
-		}
+		out: out,
+		mtx: mtx,
 	}
 }
 
 // flush renders the buffer.
-func (r *renderer) flush() {
+func (r *renderer) flush(ui string) {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 
-	if r.buf.Len() == 0 || r.buf.String() == r.lastRender {
+	if len(ui) == 0 || ui == r.lastRender {
 		// Nothing to do
 		return
 	}
@@ -103,30 +56,16 @@ func (r *renderer) flush() {
 		for i := r.linesRendered - 1; i > 0; i-- {
 			// Check if we should skip rendering for this line. Clearing the
 			// line before painting is part of the standard rendering routine.
-			if _, exists := r.ignoreLines[i]; !exists {
-				clearLine(out)
-			}
+			//if _, exists := r.ignoreLines[i]; !exists && flushMsg.ResetBeforeRender {
+			//	clearLine(out)
+			//}
 
 			cursorUp(out)
-		}
-
-		if _, exists := r.ignoreLines[0]; !exists {
-			// We need to return to the start of the line here to properly
-			// erase it. Going back the entire width of the terminal will
-			// usually be farther than we need to go, but terminal emulators
-			// will stop the cursor at the start of the line as a rule.
-			//
-			// We use this sequence in particular because it's part of the ANSI
-			// standard (whereas others are proprietary to, say, VT100/VT52).
-			// If cursor previous line (ESC[ + <n> + F) were better supported
-			// we could use that above to eliminate this step.
-			cursorBack(out, r.width)
-			clearLine(out)
 		}
 	}
 
 	r.linesRendered = 0
-	lines := strings.Split(r.buf.String(), "\n")
+	lines := strings.Split(ui, "\n")
 
 	// Paint new lines
 	for i := 0; i < len(lines); i++ {
@@ -166,17 +105,7 @@ func (r *renderer) flush() {
 	}
 
 	_, _ = r.out.Write(out.Bytes())
-	r.lastRender = r.buf.String()
-	r.buf.Reset()
-}
-
-// write writes to the internal buffer. The buffer will be outputted via the
-// ticker which calls flush().
-func (r *renderer) write(s string) {
-	r.mtx.Lock()
-	defer r.mtx.Unlock()
-	r.buf.Reset()
-	_, _ = r.buf.WriteString(s)
+	r.lastRender = ui
 }
 
 // setIgnoredLines specifies lines not to be touched by the standard Bubble Tea
