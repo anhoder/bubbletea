@@ -20,5 +20,5 @@ require (
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/rivo/uniseg v0.4.6 // indirect
-	golang.org/x/text v0.3.8 // indirect
+	golang.org/x/text v0.8.0 // indirect
 )
