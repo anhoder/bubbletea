@@ -1,5 +1,6 @@
 .DS_Store
 .envrc
+.idea/
 
 examples/fullscreen/fullscreen
 examples/help/help
