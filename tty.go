@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	isatty "github.com/mattn/go-isatty"
+	"github.com/mattn/go-isatty"
 	"github.com/muesli/cancelreader"
 	"golang.org/x/term"
 )
@@ -105,6 +105,8 @@ func (p *Program) waitForReadLoop() {
 	}
 }
 
+var lastHeight, lastWidth int
+
 // checkResize detects the current size of the output and informs the program
 // via a WindowSizeMsg.
 func (p *Program) checkResize() {
@@ -123,6 +125,11 @@ func (p *Program) checkResize() {
 
 		return
 	}
+
+	if w == lastWidth && h == lastHeight {
+		return
+	}
+	lastWidth, lastHeight = w, h
 
 	p.Send(WindowSizeMsg{
 		Width:  w,
