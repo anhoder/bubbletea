@@ -177,6 +177,77 @@ func HideCursor() Msg {
 // this message with HideCursor.
 type hideCursorMsg struct{}
 
+// ShowCursor to show the cursor.
+func ShowCursor() Msg {
+	return showCursorMsg{}
+}
+
+// showCursorMsg message to show the cursor.
+type showCursorMsg struct{}
+
+// ClearLine to clear current line.
+func ClearLine() Msg {
+	return clearLineMsg{}
+}
+
+// clearLineMsg message to clear current line.
+type clearLineMsg struct{}
+
+// InsertLine to insert one line.
+func InsertLine(numLines int) Msg {
+	return insertLineMsg{
+		numLines: numLines,
+	}
+}
+
+// insertLineMsg message to insert one line.
+type insertLineMsg struct{
+	numLines int
+}
+
+// CursorUp to move up cursor one line.
+func CursorUp() Msg {
+	return cursorUpMsg{}
+}
+
+// cursorUpMsg message to move up cursor one line.
+type cursorUpMsg struct{}
+
+// CursorDown to move down cursor one line.
+func CursorDown() Msg {
+	return cursorDownMsg{}
+}
+
+// cursorDownMsg message to move down cursor one line.
+type cursorDownMsg struct{}
+
+// MoveCursor move cursor to (row, col).
+func MoveCursor(row, col int) Msg {
+	return moveCursorMsg{
+		row: row,
+		col: col,
+	}
+}
+
+// moveCursorMsg message to move cursor.
+type moveCursorMsg struct {
+	row int
+	col int
+}
+
+// CursorBack move cursor back.
+func CursorBack(n int) Msg {
+	return cursorBackMsg{
+		num: n,
+	}
+}
+
+// cursorBackMsg message to move cursor.
+type cursorBackMsg struct {
+	num int
+}
+
+
 // NewProgram creates a new Program.
 func NewProgram(model Model, opts ...ProgramOption) *Program {
 	p := &Program{
@@ -345,12 +416,26 @@ func (p *Program) Start() error {
 		case msg := <-msgs:
 
 			// Handle special messages
-			switch msg.(type) {
+			switch msg := msg.(type) {
 			case quitMsg:
 				close(done)
 				return nil
 			case hideCursorMsg:
 				hideCursor(p.output)
+			case showCursorMsg:
+				showCursor(p.output)
+			case clearLineMsg:
+				clearLine(p.output)
+			case insertLineMsg:
+				insertLine(p.output, msg.numLines)
+			case cursorUpMsg:
+				cursorUp(p.output)
+			case cursorDownMsg:
+				cursorDown(p.output)
+			case moveCursorMsg:
+				moveCursor(p.output, msg.row, msg.col)
+			case cursorBackMsg:
+				cursorBack(p.output, msg.num)
 			}
 
 			// Process batch commands
@@ -430,4 +515,9 @@ func (p *Program) DisableMouseAllMotion() {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 	fmt.Fprintf(p.output, te.CSI+te.DisableMouseAllMotionSeq)
+}
+
+// Rerender use last render ui to refresh.
+func (p *Program) Rerender()  {
+	p.renderer.flush(p.renderer.lastRender)
 }

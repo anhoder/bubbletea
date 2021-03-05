@@ -3,6 +3,7 @@ module github.com/charmbracelet/bubbletea
 go 1.13
 
 require (
+	github.com/charmbracelet/bubbles v0.7.6 // indirect
 	github.com/containerd/console v1.0.1
 	github.com/mattn/go-isatty v0.0.12
 	github.com/muesli/reflow v0.2.1-0.20210115123740-9e1d0d53df68
