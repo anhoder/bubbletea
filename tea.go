@@ -721,3 +721,14 @@ func (p *Program) Printf(template string, args ...interface{}) {
 		messageBody: fmt.Sprintf(template, args...),
 	}
 }
+
+type flusher interface {
+	flush()
+}
+
+// Rerender use last render ui to refresh.
+func (p *Program) Rerender() {
+	if f, ok := p.renderer.(flusher); ok {
+		f.flush()
+	}
+}
