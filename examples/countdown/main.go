@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -12,8 +11,6 @@ import (
 var (
 	duration = time.Second * 10
 	interval = time.Millisecond
-	width int
-	height int
 )
 
 func main() {
@@ -54,9 +51,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		}
-
-	case tea.WindowSizeMsg:
-		width, height = msg.Width, msg.Height
 	}
 
 	return m, nil
@@ -66,7 +60,7 @@ func (m model) View() string {
 	t := m.timeout.Sub(m.lastTick).Milliseconds()
 	secs := t / 1000
 	millis := t % 1000 / 10
-	return fmt.Sprintf("This program will quit in %02d:%02d%s\n", secs, millis, strings.Repeat(" ", 10))
+	return fmt.Sprintf("This program will quit in %02d:%02d\n", secs, millis)
 }
 
 func tick() tea.Cmd {
