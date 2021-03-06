@@ -169,84 +169,44 @@ type WindowSizeMsg struct {
 // the cursor. In some rare cases, certain operations will cause the terminal
 // to show the cursor, which is normally hidden for the duration of a Bubble
 // Tea program's lifetime. You most likely will not need to use this command.
-func HideCursor() Msg {
-	return hideCursorMsg{}
+func (p *Program) HideCursor() {
+	hideCursor(p.output)
 }
-
-// hideCursorMsg is an internal command used to hide the cursor. You can send
-// this message with HideCursor.
-type hideCursorMsg struct{}
 
 // ShowCursor to show the cursor.
-func ShowCursor() Msg {
-	return showCursorMsg{}
+func (p *Program) ShowCursor() {
+	showCursor(p.output)
 }
-
-// showCursorMsg message to show the cursor.
-type showCursorMsg struct{}
 
 // ClearLine to clear current line.
-func ClearLine() Msg {
-	return clearLineMsg{}
+func (p *Program) ClearLine() {
+	clearLine(p.output)
 }
-
-// clearLineMsg message to clear current line.
-type clearLineMsg struct{}
 
 // InsertLine to insert one line.
-func InsertLine(numLines int) Msg {
-	return insertLineMsg{
-		numLines: numLines,
-	}
-}
-
-// insertLineMsg message to insert one line.
-type insertLineMsg struct{
-	numLines int
+func (p *Program) InsertLine(numLines int) {
+	insertLine(p.output, numLines)
 }
 
 // CursorUp to move up cursor one line.
-func CursorUp() Msg {
-	return cursorUpMsg{}
+func (p *Program) CursorUp() {
+	cursorUp(p.output)
 }
-
-// cursorUpMsg message to move up cursor one line.
-type cursorUpMsg struct{}
 
 // CursorDown to move down cursor one line.
-func CursorDown() Msg {
-	return cursorDownMsg{}
+func (p *Program) CursorDown() {
+	cursorDown(p.output)
 }
-
-// cursorDownMsg message to move down cursor one line.
-type cursorDownMsg struct{}
 
 // MoveCursor move cursor to (row, col).
-func MoveCursor(row, col int) Msg {
-	return moveCursorMsg{
-		row: row,
-		col: col,
-	}
-}
-
-// moveCursorMsg message to move cursor.
-type moveCursorMsg struct {
-	row int
-	col int
+func (p *Program) MoveCursor(row, col int) {
+	moveCursor(p.output, row, col)
 }
 
 // CursorBack move cursor back.
-func CursorBack(n int) Msg {
-	return cursorBackMsg{
-		num: n,
-	}
+func (p *Program) CursorBack(num int) {
+	cursorBack(p.output, num)
 }
-
-// cursorBackMsg message to move cursor.
-type cursorBackMsg struct {
-	num int
-}
-
 
 // NewProgram creates a new Program.
 func NewProgram(model Model, opts ...ProgramOption) *Program {
@@ -416,26 +376,10 @@ func (p *Program) Start() error {
 		case msg := <-msgs:
 
 			// Handle special messages
-			switch msg := msg.(type) {
+			switch msg.(type) {
 			case quitMsg:
 				close(done)
 				return nil
-			case hideCursorMsg:
-				hideCursor(p.output)
-			case showCursorMsg:
-				showCursor(p.output)
-			case clearLineMsg:
-				clearLine(p.output)
-			case insertLineMsg:
-				insertLine(p.output, msg.numLines)
-			case cursorUpMsg:
-				cursorUp(p.output)
-			case cursorDownMsg:
-				cursorDown(p.output)
-			case moveCursorMsg:
-				moveCursor(p.output, msg.row, msg.col)
-			case cursorBackMsg:
-				cursorBack(p.output, msg.num)
 			}
 
 			// Process batch commands
@@ -462,7 +406,7 @@ func (p *Program) EnterAltScreen() {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 	fmt.Fprintf(p.output, te.CSI+te.AltScreenSeq)
-	moveCursor(p.output, 0, 0)
+	moveCursor(p.output, 1, 0)
 
 	p.altScreenActive = true
 	if p.renderer != nil {
