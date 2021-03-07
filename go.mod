@@ -7,6 +7,6 @@ require (
 	github.com/mattn/go-isatty v0.0.12
 	github.com/muesli/reflow v0.2.1-0.20210115123740-9e1d0d53df68
 	github.com/muesli/termenv v0.7.4
-	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
-	golang.org/x/sys v0.0.0-20201020230747-6e5568b54d1a
+	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
+	golang.org/x/sys v0.0.0-20210305230114-8fe3ee5dd75b
 )

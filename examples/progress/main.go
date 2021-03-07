@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/charmbracelet/bubbles/progress"
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/anhoder/bubbles/progress"
+	tea "github.com/anhoder/bubbletea"
 )
 
 const (

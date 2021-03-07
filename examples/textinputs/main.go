@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/anhoder/bubbles/textinput"
+	tea "github.com/anhoder/bubbletea"
 	te "github.com/muesli/termenv"
 )
 

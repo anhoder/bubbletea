@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/viewport"
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/anhoder/bubbles/viewport"
+	tea "github.com/anhoder/bubbletea"
 	"github.com/mattn/go-runewidth"
 )
 

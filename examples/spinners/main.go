@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/anhoder/bubbles/spinner"
+	tea "github.com/anhoder/bubbletea"
 	"github.com/muesli/termenv"
 )
 
