@@ -2,7 +2,6 @@ package tea
 
 import (
 	"bytes"
-	"github.com/muesli/reflow/truncate"
 	"io"
 	"strings"
 	"sync"
@@ -87,9 +86,11 @@ func (r *renderer) flush(ui string) {
 			//
 			// Note that on Windows we can't get the width of the window
 			// (signal SIGWINCH is not supported), so this will be ignored.
-			if r.width > 0 {
-				line = truncate.String(line, uint(r.width))
-			}
+
+			// removed. The user must to limit the length of per line.
+			//if r.width > 0 {
+			//	line = truncate.String(line, uint(r.width))
+			//}
 
 			_, _ = io.WriteString(out, line)
 
