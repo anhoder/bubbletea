@@ -2,6 +2,7 @@ package tea
 
 import (
 	"bytes"
+	"github.com/muesli/termenv"
 	"io"
 	"strings"
 	"sync"
@@ -66,6 +67,7 @@ func (r *renderer) flush(ui string) {
 
 	r.linesRendered = 0
 	lines := strings.Split(ui, "\n")
+	lastLines := strings.Split(r.lastRender, "\n")
 
 	// Paint new lines
 	for i := 0; i < len(lines); i++ {
@@ -73,6 +75,13 @@ func (r *renderer) flush(ui string) {
 			cursorDown(out) // skip rendering for this line.
 		} else {
 			line := lines[i]
+
+			if i != len(lines)-1 && i < len(lastLines) && lastLines[i] == line {
+				cursorDown(out) // skip rendering for this line.
+				r.linesRendered++
+				continue
+			}
+
 			if spaceNum := r.width - utf8.RuneCountInString(line); spaceNum > 0 {
 				line += strings.Repeat(" ", spaceNum)
 			}
@@ -217,6 +226,10 @@ func (r *renderer) insertBottom(lines []string, topBoundary, bottomBoundary int)
 func (r *renderer) handleMessages(msg Msg) {
 	switch msg := msg.(type) {
 	case WindowSizeMsg:
+		if r.width != 0 || r.height != 0 {
+			termenv.ClearScreen()
+			r.lastRender = ""
+		}
 		r.width = msg.Width
 		r.height = msg.Height
 

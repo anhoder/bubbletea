@@ -169,44 +169,13 @@ type WindowSizeMsg struct {
 // the cursor. In some rare cases, certain operations will cause the terminal
 // to show the cursor, which is normally hidden for the duration of a Bubble
 // Tea program's lifetime. You most likely will not need to use this command.
-func (p *Program) HideCursor() {
-	hideCursor(p.output)
+func HideCursor() Msg {
+	return hideCursorMsg{}
 }
 
-// ShowCursor to show the cursor.
-func (p *Program) ShowCursor() {
-	showCursor(p.output)
-}
-
-// ClearLine to clear current line.
-func (p *Program) ClearLine() {
-	clearLine(p.output)
-}
-
-// InsertLine to insert one line.
-func (p *Program) InsertLine(numLines int) {
-	insertLine(p.output, numLines)
-}
-
-// CursorUp to move up cursor one line.
-func (p *Program) CursorUp() {
-	cursorUp(p.output)
-}
-
-// CursorDown to move down cursor one line.
-func (p *Program) CursorDown() {
-	cursorDown(p.output)
-}
-
-// MoveCursor move cursor to (row, col).
-func (p *Program) MoveCursor(row, col int) {
-	moveCursor(p.output, row, col)
-}
-
-// CursorBack move cursor back.
-func (p *Program) CursorBack(num int) {
-	cursorBack(p.output, num)
-}
+// hideCursorMsg is an internal command used to hide the cursor. You can send
+// this message with HideCursor.
+type hideCursorMsg struct{}
 
 // NewProgram creates a new Program.
 func NewProgram(model Model, opts ...ProgramOption) *Program {
@@ -380,7 +349,10 @@ func (p *Program) Start() error {
 			case quitMsg:
 				close(done)
 				return nil
+			case hideCursorMsg:
+				hideCursor(p.output)
 			}
+
 
 			// Process batch commands
 			if batchedCmds, ok := msg.(batchMsg); ok {
