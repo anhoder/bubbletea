@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 	"sync"
+	"unicode/utf8"
 )
 
 // renderer is a timer-based renderer, updating the view at a given framerate
@@ -65,7 +66,6 @@ func (r *renderer) flush(ui string) {
 
 	r.linesRendered = 0
 	lines := strings.Split(ui, "\n")
-	lastLines := strings.Split(r.lastRender, "\n")
 
 	// Paint new lines
 	for i := 0; i < len(lines); i++ {
@@ -73,11 +73,8 @@ func (r *renderer) flush(ui string) {
 			cursorDown(out) // skip rendering for this line.
 		} else {
 			line := lines[i]
-			if i < len(lastLines) {
-				lastLine := lastLines[i]
-				if spaceNum := len(lastLine) - len(line); spaceNum > 0 {
-					line += strings.Repeat(" ", spaceNum)
-				}
+			if spaceNum := r.width - utf8.RuneCountInString(line); spaceNum > 0 {
+				line += strings.Repeat(" ", spaceNum)
 			}
 
 			// Truncate lines wider than the width of the window to avoid
