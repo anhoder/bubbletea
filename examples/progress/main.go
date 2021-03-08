@@ -23,6 +23,8 @@ func main() {
 		fmt.Println("Could not initialize progress model:", err)
 		os.Exit(1)
 	}
+	prog.Full = '#'
+	prog.Empty = ' '
 
 	if err = tea.NewProgram(example{progress: prog}).Start(); err != nil {
 		fmt.Println("Oh no!", err)

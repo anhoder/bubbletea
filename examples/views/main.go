@@ -22,8 +22,8 @@ import (
 
 const (
 	progressBarWidth  = 71
-	progressFullChar  = "█"
-	progressEmptyChar = "░"
+	progressFullChar  = "#"
+	progressEmptyChar = " "
 )
 
 // General stuff for styling the view
