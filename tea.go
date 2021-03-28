@@ -361,7 +361,6 @@ func (p *Program) Start() error {
 			case ClearScreenMsg:
 				clearScreen(p.output)
 				p.renderer.lastRender = strings.Repeat("\n", p.renderer.height-1)
-				continue
 			}
 
 
