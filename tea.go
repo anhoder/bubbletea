@@ -16,6 +16,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime/debug"
+	"strings"
 	"sync"
 	"syscall"
 
@@ -176,6 +177,12 @@ func HideCursor() Msg {
 // hideCursorMsg is an internal command used to hide the cursor. You can send
 // this message with HideCursor.
 type hideCursorMsg struct{}
+
+func ClearScreen() Msg {
+	return ClearScreenMsg{}
+}
+
+type ClearScreenMsg struct{}
 
 // NewProgram creates a new Program.
 func NewProgram(model Model, opts ...ProgramOption) *Program {
@@ -351,6 +358,10 @@ func (p *Program) Start() error {
 				return nil
 			case hideCursorMsg:
 				hideCursor(p.output)
+			case ClearScreenMsg:
+				clearScreen(p.output)
+				p.renderer.lastRender = strings.Repeat("\n", p.renderer.height-1)
+				continue
 			}
 
 

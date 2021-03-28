@@ -19,6 +19,10 @@ func clearLine(w io.Writer) {
 	fmt.Fprintf(w, te.CSI+te.EraseLineSeq, 2)
 }
 
+func clearScreen(w io.Writer) {
+	fmt.Fprintf(w, te.CSI+te.EraseDisplaySeq, 2)
+}
+
 func cursorUp(w io.Writer) {
 	fmt.Fprintf(w, te.CSI+te.CursorUpSeq, 1)
 }
