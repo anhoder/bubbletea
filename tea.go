@@ -359,8 +359,8 @@ func (p *Program) Start() error {
 			case hideCursorMsg:
 				hideCursor(p.output)
 			case ClearScreenMsg:
-				clearScreen(p.output)
 				p.renderer.lastRender = strings.Repeat("\n", p.renderer.height-1)
+				fmt.Print(p.renderer.lastRender)
 			}
 
 

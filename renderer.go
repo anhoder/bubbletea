@@ -2,11 +2,11 @@ package tea
 
 import (
 	"bytes"
+	"github.com/mattn/go-runewidth"
 	"github.com/muesli/termenv"
 	"io"
 	"strings"
 	"sync"
-	"unicode/utf8"
 )
 
 // renderer is a timer-based renderer, updating the view at a given framerate
@@ -82,7 +82,7 @@ func (r *renderer) flush(ui string) {
 				continue
 			}
 
-			if spaceNum := r.width - utf8.RuneCountInString(line); spaceNum > 0 {
+			if spaceNum := r.width - runewidth.StringWidth(line); spaceNum > 0 {
 				line += strings.Repeat(" ", spaceNum)
 			}
 
