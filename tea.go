@@ -444,6 +444,6 @@ func (p *Program) DisableMouseAllMotion() {
 }
 
 // Rerender use last render ui to refresh.
-func (p *Program) Rerender()  {
-	p.renderer.flush(p.renderer.lastRender)
+func (p *Program) Rerender(view string)  {
+	p.renderer.flush(view)
 }
