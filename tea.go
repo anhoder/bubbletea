@@ -359,6 +359,15 @@ func (p *Program) Start() error {
 			case hideCursorMsg:
 				hideCursor(p.output)
 			case ClearScreenMsg:
+				go func() {
+					if p.outputIsTTY {
+						w, h, err := terminal.GetSize(int(outputAsFile.Fd()))
+						if err != nil {
+							errs <- err
+						}
+						msgs <- WindowSizeMsg{w, h}
+					}
+				}()
 				p.renderer.lastRender = strings.Repeat("\n", p.renderer.height-1)
 				fmt.Print(p.renderer.lastRender)
 			}
