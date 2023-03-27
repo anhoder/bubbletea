@@ -71,3 +71,7 @@ type renderer interface {
 
 // repaintMsg forces a full repaint.
 type repaintMsg struct{}
+
+type handleMsgRender interface {
+	handleMessages(msg Msg)
+}
