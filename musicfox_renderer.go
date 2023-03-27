@@ -96,7 +96,7 @@ func (r *musicfoxRenderer) flush() {
 			if (len(newLines) <= len(oldLines)) && (len(newLines) > i && len(oldLines) > i) && (newLines[i] == oldLines[i]) {
 				skipLines[i] = struct{}{}
 			} else if _, exists := r.ignoreLines[i]; !exists {
-				out.ClearLine()
+				//out.ClearLine()
 			}
 
 			out.CursorUp(1)
@@ -113,7 +113,7 @@ func (r *musicfoxRenderer) flush() {
 			// If cursor previous line (ESC[ + <n> + F) were better supported
 			// we could use that above to eliminate this step.
 			out.CursorBack(r.width)
-			out.ClearLine()
+			//out.ClearLine()
 		}
 	}
 
