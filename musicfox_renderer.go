@@ -5,6 +5,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/mattn/go-runewidth"
 	"github.com/muesli/ansi/compressor"
 	"github.com/muesli/reflow/truncate"
 	"github.com/muesli/termenv"
@@ -145,6 +146,10 @@ func (r *musicfoxRenderer) flush() {
 				line = truncate.String(line, uint(r.width))
 			}
 
+			if spaceNum := r.width - runewidth.StringWidth(line); spaceNum > 0 {
+				line += strings.Repeat(" ", spaceNum)
+			}
+
 			_, _ = out.WriteString(line)
 
 			if i < len(newLines)-1 {
@@ -172,7 +177,6 @@ func (r *musicfoxRenderer) flush() {
 
 func (r *musicfoxRenderer) write(s string) {
 	r.mtx.Lock()
-	defer r.mtx.Unlock()
 	r.buf.Reset()
 
 	if s == "" {
@@ -180,5 +184,7 @@ func (r *musicfoxRenderer) write(s string) {
 	}
 
 	_, _ = r.buf.WriteString(s)
+	r.mtx.Unlock()
+
 	r.flush()
 }

@@ -335,7 +335,7 @@ func (p *Program) eventLoop(model Model, cmds chan Cmd) (Model, error) {
 			}
 
 			// Process internal messages for the renderer.
-			if r, ok := p.renderer.(*standardRenderer); ok {
+			if r, ok := p.renderer.(handleMsgRender); ok {
 				r.handleMessages(msg)
 			}
 
@@ -648,15 +648,4 @@ func (h handlers) shutdown() {
 		}(ch)
 	}
 	wg.Wait()
-}
-
-type flusher interface {
-	flush()
-}
-
-// Rerender use last render ui to refresh.
-func (p *Program) Rerender() {
-	if f, ok := p.renderer.(flusher); ok {
-		f.flush()
-	}
 }
