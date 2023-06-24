@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/mattn/go-runewidth"
 	"github.com/muesli/ansi/compressor"
@@ -27,7 +28,7 @@ func newFoxfulRenderer(out *termenv.Output, useANSICompressor bool) renderer {
 			out:                out,
 			mtx:                &sync.Mutex{},
 			done:               make(chan struct{}),
-			framerate:          defaultFramerate,
+			framerate:          time.Second / time.Duration(defaultFPS),
 			useANSICompressor:  useANSICompressor,
 			queuedMessageLines: []string{},
 		},
