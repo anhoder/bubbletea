@@ -11,18 +11,18 @@ import (
 	"github.com/muesli/termenv"
 )
 
-func ReplaceWithMusicfoxRenderer(p *Program) *Program {
-	p.renderer = newMusicfoxRenderer(p.output, p.startupOptions.has(withANSICompressor))
+func ReplaceWithFoxfulRenderer(p *Program) *Program {
+	p.renderer = newFoxfulRenderer(p.output, p.startupOptions.has(withANSICompressor))
 	return p
 }
 
-// musicfoxRenderer Customized render for musicfox
-type musicfoxRenderer struct {
+// foxfulRenderer Customized render for musicfox
+type foxfulRenderer struct {
 	standardRenderer
 }
 
-func newMusicfoxRenderer(out *termenv.Output, useANSICompressor bool) renderer {
-	r := &musicfoxRenderer{
+func newFoxfulRenderer(out *termenv.Output, useANSICompressor bool) renderer {
+	r := &foxfulRenderer{
 		standardRenderer: standardRenderer{
 			out:                out,
 			mtx:                &sync.Mutex{},
@@ -38,22 +38,22 @@ func newMusicfoxRenderer(out *termenv.Output, useANSICompressor bool) renderer {
 	return r
 }
 
-func (r *musicfoxRenderer) start() {
+func (r *foxfulRenderer) start() {
 }
 
-func (r *musicfoxRenderer) stop() {
+func (r *foxfulRenderer) stop() {
 }
 
-func (r *musicfoxRenderer) kill() {
+func (r *foxfulRenderer) kill() {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	r.out.ClearLine()
 }
 
-func (r *musicfoxRenderer) listen() {
+func (r *foxfulRenderer) listen() {
 }
 
-func (r *musicfoxRenderer) flush() {
+func (r *foxfulRenderer) flush() {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 
@@ -175,7 +175,7 @@ func (r *musicfoxRenderer) flush() {
 	r.buf.Reset()
 }
 
-func (r *musicfoxRenderer) write(s string) {
+func (r *foxfulRenderer) write(s string) {
 	r.mtx.Lock()
 	r.buf.Reset()
 
